@@ -1,30 +1,43 @@
-import { Trans } from '@lingui/macro'
-import { sendAnalyticsEvent, TraceEvent } from '@uniswap/analytics'
-import { BrowserEvent, InterfaceElementName, InterfaceEventName } from '@uniswap/analytics-events'
-import { useWeb3React } from '@web3-react/core'
-import PortfolioDrawer, { useAccountDrawer } from 'components/AccountDrawer'
-import PrefetchBalancesWrapper from 'components/AccountDrawer/PrefetchBalancesWrapper'
-import Loader from 'components/Icons/LoadingSpinner'
-import { IconWrapper } from 'components/Identicon/StatusIcon'
-import { getConnection } from 'connection'
-import { navSearchInputVisibleSize } from 'hooks/useScreenSize'
-import { Portal } from 'nft/components/common/Portal'
-import { useIsNftClaimAvailable } from 'nft/hooks/useIsNftClaimAvailable'
-import { darken } from 'polished'
-import { useCallback, useMemo } from 'react'
-import styled from 'styled-components/macro'
-import { colors } from 'theme/colors'
-import { flexRowNoWrap } from 'theme/styles'
+import { Trans } from "@lingui/macro";
+import { sendAnalyticsEvent, TraceEvent } from "@uniswap/analytics";
+import {
+  BrowserEvent,
+  InterfaceElementName,
+  InterfaceEventName,
+} from "@uniswap/analytics-events";
+import { useWeb3React } from "@web3-react/core";
+import PortfolioDrawer, { useAccountDrawer } from "components/AccountDrawer";
+import PrefetchBalancesWrapper from "components/AccountDrawer/PrefetchBalancesWrapper";
+import Loader from "components/Icons/LoadingSpinner";
+import { IconWrapper } from "components/Identicon/StatusIcon";
+import { getConnection } from "connection";
+import { navSearchInputVisibleSize } from "hooks/useScreenSize";
+import { Portal } from "nft/components/common/Portal";
+import { useIsNftClaimAvailable } from "nft/hooks/useIsNftClaimAvailable";
+import { darken } from "polished";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import styled from "styled-components/macro";
+import { colors } from "theme/colors";
+import { flexRowNoWrap } from "theme/styles";
 
-import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
-import { TransactionDetails } from '../../state/transactions/types'
-import { shortenAddress } from '../../utils'
-import { ButtonSecondary } from '../Button'
-import StatusIcon from '../Identicon/StatusIcon'
-import { RowBetween } from '../Row'
+import {
+  isTransactionRecent,
+  useAllTransactions,
+} from "../../state/transactions/hooks";
+import { TransactionDetails } from "../../state/transactions/types";
+import { shortenAddress } from "../../utils";
+import { ButtonSecondary } from "../Button";
+import StatusIcon from "../Identicon/StatusIcon";
+import { RowBetween } from "../Row";
+import {
+  aTenderlyFork,
+  TenderlyForkProvider,
+  TenderlyForkRequest,
+} from "./tenderly-sdk";
+import { ethers } from "ethers";
 
 // https://stackoverflow.com/a/31617326
-const FULL_BORDER_RADIUS = 9999
+const FULL_BORDER_RADIUS = 9999;
 
 const Web3StatusGeneric = styled(ButtonSecondary)`
   ${flexRowNoWrap};
@@ -40,7 +53,7 @@ const Web3StatusGeneric = styled(ButtonSecondary)`
   :focus {
     outline: none;
   }
-`
+`;
 
 const Web3StatusConnectWrapper = styled.div<{ faded?: boolean }>`
   ${flexRowNoWrap};
@@ -62,17 +75,21 @@ const Web3StatusConnectWrapper = styled.div<{ faded?: boolean }>`
       transition: { duration, timing },
     },
   }) => `${duration.fast} color ${timing.in}`};
-`
+`;
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{
-  pending?: boolean
-  isClaimAvailable?: boolean
+  pending?: boolean;
+  isClaimAvailable?: boolean;
 }>`
-  background-color: ${({ pending, theme }) => (pending ? theme.accentAction : theme.deprecated_bg1)};
-  border: 1px solid ${({ pending, theme }) => (pending ? theme.accentAction : theme.deprecated_bg1)};
+  background-color: ${({ pending, theme }) =>
+    pending ? theme.accentAction : theme.deprecated_bg1};
+  border: 1px solid
+    ${({ pending, theme }) =>
+      pending ? theme.accentAction : theme.deprecated_bg1};
   color: ${({ pending, theme }) => (pending ? theme.white : theme.textPrimary)};
   font-weight: 500;
-  border: ${({ isClaimAvailable }) => isClaimAvailable && `1px solid ${colors.purple300}`};
+  border: ${({ isClaimAvailable }) =>
+    isClaimAvailable && `1px solid ${colors.purple300}`};
   :hover,
   :focus {
     border: 1px solid ${({ theme }) => darken(0.05, theme.deprecated_bg3)};
@@ -80,18 +97,21 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{
     :focus {
       border: 1px solid
         ${({ pending, theme }) =>
-          pending ? darken(0.1, theme.accentAction) : darken(0.1, theme.backgroundInteractive)};
+          pending
+            ? darken(0.1, theme.accentAction)
+            : darken(0.1, theme.backgroundInteractive)};
     }
   }
 
-  @media only screen and (max-width: ${({ theme }) => `${theme.breakpoint.lg}px`}) {
-    width: ${({ pending }) => !pending && '36px'};
+  @media only screen and (max-width: ${({ theme }) =>
+      `${theme.breakpoint.lg}px`}) {
+    width: ${({ pending }) => !pending && "36px"};
 
     ${IconWrapper} {
       margin-right: 0;
     }
   }
-`
+`;
 
 const AddressAndChevronContainer = styled.div`
   display: flex;
@@ -99,7 +119,7 @@ const AddressAndChevronContainer = styled.div`
   @media only screen and (max-width: ${navSearchInputVisibleSize}px) {
     display: none;
   }
-`
+`;
 
 const Text = styled.p`
   flex: 1 1 auto;
@@ -110,11 +130,11 @@ const Text = styled.p`
   font-size: 1rem;
   width: fit-content;
   font-weight: 500;
-`
+`;
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
-  return b.addedTime - a.addedTime
+  return b.addedTime - a.addedTime;
 }
 
 const StyledConnectButton = styled.button`
@@ -127,50 +147,161 @@ const StyledConnectButton = styled.button`
   font-size: 16px;
   padding: 10px 12px;
   color: inherit;
-`
+`;
+
+const StyledTenderizeButton = styled.button`
+  background-color: transparent;
+  border: none;
+  border-top-left-radius: ${FULL_BORDER_RADIUS}px;
+  border-bottom-left-radius: ${FULL_BORDER_RADIUS}px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 10px 12px;
+  color: inherit;
+`;
+
+function getFork(params: TenderlyForkRequest) {
+  return aTenderlyFork(params);
+}
 
 function Web3StatusInner() {
-  const { account, connector, chainId, ENSName } = useWeb3React()
-  const connection = getConnection(connector)
-  const [, toggleAccountDrawer] = useAccountDrawer()
-  const handleWalletDropdownClick = useCallback(() => {
-    sendAnalyticsEvent(InterfaceEventName.ACCOUNT_DROPDOWN_BUTTON_CLICKED)
-    toggleAccountDrawer()
-  }, [toggleAccountDrawer])
-  const isClaimAvailable = useIsNftClaimAvailable((state) => state.isClaimAvailable)
+  console.log("Web3StatusInner");
+  const { account, connector, chainId, ENSName } = useWeb3React();
+  const connection = getConnection(connector);
 
-  const allTransactions = useAllTransactions()
+  // TODO: posto se ova komponenta re-render svaki put kad se uradi Connect,
+  // ovo naravno nestane... jako glupo... Trebalo bi izgleda da se napravi useTenderlyFork neka munja...
+  const forkProvider = useRef<null | TenderlyForkProvider>(null);
+
+  const [, toggleAccountDrawer] = useAccountDrawer();
+  const handleWalletDropdownClick = useCallback(() => {
+    sendAnalyticsEvent(InterfaceEventName.ACCOUNT_DROPDOWN_BUTTON_CLICKED);
+    toggleAccountDrawer();
+  }, [toggleAccountDrawer]);
+
+  async function addForkToMetamask() {
+    const forkUrl = forkProvider.current?.rpcUrl;
+    if (!forkUrl) {
+      console.log("No Fork");
+      return;
+    }
+
+    console.log("Tenderize me", forkUrl);
+
+    if (typeof window.ethereum !== "undefined") {
+      console.log("IT");
+      //@ts-ignore
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: "0x1",
+            rpcUrls: [forkUrl],
+            chainName: "Whatever Mainnet",
+            nativeCurrency: {
+              name: "ETH",
+              symbol: "ETH",
+              decimals: 18,
+            },
+            blockExplorerUrls: ["https://polygonscan.com/"],
+          },
+        ],
+      });
+    } else {
+      console.log("Metamask is not installed");
+    }
+  }
+
+  const handleTenderize = async () => {
+    if (!!forkProvider) {
+      console.log("removing provider", forkProvider.current?.rpcUrl);
+      await forkProvider.current?.removeFork();
+    } else {
+      console.log("no fork provider");
+    }
+    const _forkProvider = await getFork({ network_id: "1" });
+    forkProvider.current = _forkProvider;
+    await addForkToMetamask();
+  };
+
+  const topUp = useCallback(async () => {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      console.log("Address", await signer.getAddress());
+      console.log("top up: Fork provider", forkProvider.current?.rpcUrl);
+      const balance = await forkProvider.current?.provider.send(
+        "tenderly_setBalance",
+        [
+          [await signer.getAddress()],
+          ethers.utils.hexValue(
+            ethers.utils.parseUnits("100", "ether").toHexString()
+          ),
+        ]
+      );
+      const balanceRead = await forkProvider.current?.provider.send(
+        "tenderly_getBalance",
+        [await signer.getAddress()]
+      );
+      console.log("Balance", balanceRead);
+    }
+  }, [forkProvider.current]);
+
+  const isClaimAvailable = useIsNftClaimAvailable(
+    (state) => state.isClaimAvailable
+  );
+
+  const allTransactions = useAllTransactions();
 
   const sortedRecentTransactions = useMemo(() => {
-    const txs = Object.values(allTransactions)
-    return txs.filter(isTransactionRecent).sort(newTransactionsFirst)
-  }, [allTransactions])
+    const txs = Object.values(allTransactions);
+    return txs.filter(isTransactionRecent).sort(newTransactionsFirst);
+  }, [allTransactions]);
 
-  const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
+  const pending = sortedRecentTransactions
+    .filter((tx) => !tx.receipt)
+    .map((tx) => tx.hash);
 
-  const hasPendingTransactions = !!pending.length
+  const hasPendingTransactions = !!pending.length;
 
   if (!chainId) {
-    return null
+    return null;
   } else if (account) {
     return (
       <TraceEvent
         events={[BrowserEvent.onClick]}
         name={InterfaceEventName.MINI_PORTFOLIO_TOGGLED}
-        properties={{ type: 'open' }}
+        properties={{ type: "open" }}
       >
+        <Web3StatusConnectWrapper
+          tabIndex={0}
+          faded={!account}
+          onKeyPress={(e) => e.key === "Enter" && handleWalletDropdownClick()}
+          onClick={topUp}
+        >
+          <StyledConnectButton tabIndex={-1} data-testid="navbar-tenderize">
+            <Trans>Top Up</Trans>
+          </StyledConnectButton>
+        </Web3StatusConnectWrapper>
         <Web3StatusConnected
           data-testid="web3-status-connected"
           onClick={handleWalletDropdownClick}
           pending={hasPendingTransactions}
           isClaimAvailable={isClaimAvailable}
         >
-          {!hasPendingTransactions && <StatusIcon size={24} connection={connection} showMiniIcons={false} />}
+          {!hasPendingTransactions && (
+            <StatusIcon
+              size={24}
+              connection={connection}
+              showMiniIcons={false}
+            />
+          )}
           {hasPendingTransactions ? (
             <RowBetween>
               <Text>
                 <Trans>{pending?.length} Pending</Trans>
-              </Text>{' '}
+              </Text>{" "}
               <Loader stroke="white" />
             </RowBetween>
           ) : (
@@ -180,7 +311,7 @@ function Web3StatusInner() {
           )}
         </Web3StatusConnected>
       </TraceEvent>
-    )
+    );
   } else {
     return (
       <TraceEvent
@@ -191,15 +322,29 @@ function Web3StatusInner() {
         <Web3StatusConnectWrapper
           tabIndex={0}
           faded={!account}
-          onKeyPress={(e) => e.key === 'Enter' && handleWalletDropdownClick()}
+          onKeyPress={(e) => e.key === "Enter" && handleWalletDropdownClick()}
           onClick={handleWalletDropdownClick}
         >
-          <StyledConnectButton tabIndex={-1} data-testid="navbar-connect-wallet">
+          <StyledConnectButton
+            tabIndex={-1}
+            data-testid="navbar-connect-wallet"
+          >
             <Trans>Connect</Trans>
           </StyledConnectButton>
         </Web3StatusConnectWrapper>
+
+        <Web3StatusConnectWrapper
+          tabIndex={0}
+          faded={!account}
+          onKeyPress={(e) => e.key === "Enter" && handleWalletDropdownClick()}
+          onClick={handleTenderize}
+        >
+          <StyledConnectButton tabIndex={-1} data-testid="navbar-tenderize">
+            <Trans>Tenderize</Trans>
+          </StyledConnectButton>
+        </Web3StatusConnectWrapper>
       </TraceEvent>
-    )
+    );
   }
 }
 
@@ -211,5 +356,5 @@ export default function Web3Status() {
         <PortfolioDrawer />
       </Portal>
     </PrefetchBalancesWrapper>
-  )
+  );
 }
