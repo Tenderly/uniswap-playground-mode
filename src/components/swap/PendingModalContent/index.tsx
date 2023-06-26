@@ -4,7 +4,9 @@ import { useWeb3React } from '@web3-react/core'
 import { ColumnCenter } from 'components/Column'
 import Column from 'components/Column'
 import Row from 'components/Row'
+import { TenderlyForkProvider } from 'components/Web3Status/tenderly-sdk'
 import { SupportedChainId } from 'constants/chains'
+import { useActiveTenderlyFork } from 'hooks/useTenderlyFork'
 import { useUnmountingAnimation } from 'hooks/useUnmountingAnimation'
 import { ReactNode, useRef } from 'react'
 import { InterfaceTrade } from 'state/routing/types'
@@ -116,10 +118,21 @@ interface ContentArgs {
   tokenApprovalPending: boolean
   swapTxHash?: string
   chainId?: number
+  tenderlyForkProvider?: TenderlyForkProvider
+}
+
+function tuck(hash: string): string {
+  return `${hash.slice(hash.indexOf('0x') == 0 ? 0 : 2, 8)}...${hash.slice(-4)}`
 }
 
 function getContent(args: ContentArgs): PendingModalStep {
   const { step, approvalCurrency, swapConfirmed, swapPending, tokenApprovalPending, trade, swapTxHash, chainId } = args
+  const explorerLink = args.tenderlyForkProvider
+    ? args.tenderlyForkProvider.publicUrl
+    : chainId && swapTxHash
+    ? getExplorerLink(chainId, swapTxHash, ExplorerDataType.TRANSACTION)
+    : ''
+
   switch (step) {
     case ConfirmModalState.APPROVING_TOKEN:
       return {
@@ -147,11 +160,9 @@ function getContent(args: ContentArgs): PendingModalStep {
         subtitle: trade ? <TradeSummary trade={trade} /> : null,
         label:
           swapConfirmed && swapTxHash && chainId ? (
-            <ExternalLink
-              href={getExplorerLink(chainId, swapTxHash, ExplorerDataType.TRANSACTION)}
-              color="textSecondary"
-            >
-              <Trans>View on Explorer</Trans>
+            <ExternalLink href={explorerLink} color="textSecondary" style={{ fontSize: '18px' }}>
+              {!args.tenderlyForkProvider && <Trans>View on Explorer</Trans>}
+              {args.tenderlyForkProvider && <Trans>Open in Tenderly</Trans>}
             </ExternalLink>
           ) : !swapPending ? (
             t`Proceed in your wallet`
@@ -171,6 +182,7 @@ export function PendingModalContent({
   const { chainId } = useWeb3React()
   const swapConfirmed = useIsTransactionConfirmed(swapTxHash)
   const swapPending = swapTxHash !== undefined && !swapConfirmed
+  const { forkProvider } = useActiveTenderlyFork()
   const { label, button } = getContent({
     step: currentStep,
     approvalCurrency: trade?.inputAmount.currency,
@@ -180,6 +192,7 @@ export function PendingModalContent({
     swapTxHash,
     trade,
     chainId,
+    tenderlyForkProvider: forkProvider,
   })
   const currentStepContainerRef = useRef<HTMLDivElement>(null)
   useUnmountingAnimation(currentStepContainerRef, () => AnimationType.EXITING)

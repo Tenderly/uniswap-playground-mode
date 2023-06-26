@@ -4,6 +4,7 @@ import { useWeb3React } from '@web3-react/core'
 import Badge from 'components/Badge'
 import { getChainInfo } from 'constants/chainInfo'
 import { SupportedChainId, SupportedL2ChainId } from 'constants/chains'
+import { useTenderlyForkProvider } from 'hooks/useTenderlyFork'
 import useCurrencyLogoURIs from 'lib/hooks/useCurrencyLogoURIs'
 import { ReactNode, useCallback, useState } from 'react'
 import { AlertCircle, ArrowUpCircle, CheckCircle } from 'react-feather'
@@ -102,10 +103,18 @@ function TransactionSubmittedContent({
 
   const { connector } = useWeb3React()
 
+  const [tenderlyForkProvider] = useTenderlyForkProvider()
+
   const token = currencyToAdd?.wrapped
   const logoURL = useCurrencyLogoURIs(token)[0]
 
   const [success, setSuccess] = useState<boolean | undefined>()
+
+  const explorerLink = hash
+    ? tenderlyForkProvider != null
+      ? tenderlyForkProvider.publicUrl
+      : getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
+    : ''
 
   const addToken = useCallback(() => {
     if (!token?.symbol || !connector.watchAsset) return
@@ -156,7 +165,7 @@ function TransactionSubmittedContent({
             </ThemedText.HeadlineSmall>
           </ButtonPrimary>
           {chainId && hash && (
-            <ExternalLink href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
+            <ExternalLink href={explorerLink}>
               <ThemedText.Link color={theme.accentAction}>
                 <Trans>View on {chainId === SupportedChainId.MAINNET ? 'Etherscan' : 'Block Explorer'}</Trans>
               </ThemedText.Link>
@@ -217,6 +226,7 @@ function L2Content({
   const transaction = useTransaction(hash)
   const confirmed = useIsTransactionConfirmed(hash)
   const transactionSuccess = transaction?.receipt?.status === 1
+  const [tenderlyForkProvider] = useTenderlyForkProvider()
 
   // convert unix time difference to seconds
   const secondsToConfirm = transaction?.confirmedTime
@@ -224,6 +234,12 @@ function L2Content({
     : undefined
 
   const info = getChainInfo(chainId)
+
+  const explorerLink = hash
+    ? tenderlyForkProvider != null
+      ? tenderlyForkProvider.publicUrl
+      : getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)
+    : ''
 
   return (
     <Wrapper>
@@ -267,7 +283,7 @@ function L2Content({
             {transaction ? <TransactionSummary info={transaction.info} /> : pendingText}
           </ThemedText.BodySecondary>
           {chainId && hash ? (
-            <ExternalLink href={getExplorerLink(chainId, hash, ExplorerDataType.TRANSACTION)}>
+            <ExternalLink href={explorerLink}>
               <ThemedText.SubHeaderSmall color={theme.accentAction}>
                 <Trans>View on Explorer</Trans>
               </ThemedText.SubHeaderSmall>
@@ -281,7 +297,13 @@ function L2Content({
             ) : (
               <div>
                 <Trans>Transaction completed in </Trans>
-                <span style={{ fontWeight: 500, marginLeft: '4px', color: theme.textPrimary }}>
+                <span
+                  style={{
+                    fontWeight: 500,
+                    marginLeft: '4px',
+                    color: theme.textPrimary,
+                  }}
+                >
                   {secondsToConfirm} seconds 🎉
                 </span>
               </div>

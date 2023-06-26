@@ -6,6 +6,7 @@ import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { useIsLandingPage } from 'hooks/useIsLandingPage'
 import { useIsNftPage } from 'hooks/useIsNftPage'
 import useMachineTimeMs from 'hooks/useMachineTime'
+import { useTenderlyForkProvider } from 'hooks/useTenderlyFork'
 import useBlockNumber from 'lib/hooks/useBlockNumber'
 import ms from 'ms.macro'
 import { useEffect, useMemo, useState } from 'react'
@@ -109,6 +110,7 @@ export default function Polling() {
   const blockTime = useCurrentBlockTimestamp()
   const isNftPage = useIsNftPage()
   const isLandingPage = useIsLandingPage()
+  const [tenderlyForkProvider, _, aNewTenderlyForkProvider] = useTenderlyForkProvider()
 
   const waitMsBeforeWarning =
     (chainId ? getChainInfo(chainId)?.blockWaitMsBeforeWarning : DEFAULT_MS_BEFORE_WARNING) ?? DEFAULT_MS_BEFORE_WARNING
@@ -137,8 +139,11 @@ export default function Polling() {
 
   const blockExternalLinkHref = useMemo(() => {
     if (!chainId || !blockNumber) return ''
+    if (tenderlyForkProvider) {
+      return tenderlyForkProvider?.publicUrl || ''
+    }
     return getExplorerLink(chainId, blockNumber.toString(), ExplorerDataType.BLOCK)
-  }, [blockNumber, chainId])
+  }, [blockNumber, chainId, tenderlyForkProvider])
 
   if (isNftPage || isLandingPage) {
     return null
@@ -146,6 +151,7 @@ export default function Polling() {
 
   return (
     <RowFixed>
+      <StyledPolling style={{ bottom: '22px' }}></StyledPolling>
       <StyledPolling onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
         <StyledPollingBlockNumber breathe={isMounting} hovering={isHover} warning={warning}>
           <ExternalLink href={blockExternalLinkHref}>

@@ -9,6 +9,7 @@ import { SupportedChainId, UniWalletSupportedChains } from 'constants/chains'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useSelectChain from 'hooks/useSelectChain'
 import useSyncChainQuery from 'hooks/useSyncChainQuery'
+import { useTenderlyForkProvider } from 'hooks/useTenderlyFork'
 import { Box } from 'nft/components/Box'
 import { Portal } from 'nft/components/common/Portal'
 import { Column, Row } from 'nft/components/Flex'
@@ -69,6 +70,7 @@ export const ChainSelector = ({ leftAlign }: ChainSelectorProps) => {
   const { chainId } = useWeb3React()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const isMobile = useIsMobile()
+  const [_, isForkPending, aNewForkProvider] = useTenderlyForkProvider()
 
   const theme = useTheme()
 
@@ -111,8 +113,18 @@ export const ChainSelector = ({ leftAlign }: ChainSelectorProps) => {
             targetChain={selectorChain}
             key={selectorChain}
             isPending={selectorChain === pendingChainId}
+            isTenderlyFork={false}
           />
         ))}
+
+        <ChainSelectorRow
+          disabled={false}
+          onSelectChain={() => aNewForkProvider(chainId)}
+          targetChain={SupportedChainId.BNB}
+          key="tenderly-fork"
+          isTenderlyFork={true}
+          isPending={isForkPending}
+        />
       </Column>
     </NavDropdown>
   )
