@@ -62,16 +62,6 @@ export function useTenderlyForkProvider(): [
   return [prov, prov != null, useANewProvider(), usePlaygroundRemover()]
 }
 
-export function useTenderlyForkTopUpConnectedSigner() {
-  const currentProvider = useAtomValue(provider)
-  return useCallback(async () => {
-    if (currentProvider == null) {
-      return
-    }
-    return await topUpConnectedSigner(currentProvider)
-  }, [currentProvider])
-}
-
 async function topUpConnectedSigner(forkProvider: TenderlyForkProvider) {
   if (window.ethereum) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -130,21 +120,3 @@ function usePlaygroundRemover() {
     setProvider(null)
   }, [currentProvider, setProvider])
 }
-
-// export async function unsimulateMetamask(chainId: number | undefined) {
-//   try {
-//     console.log('Unsimulating', `0x${chainId?.toString(16)}`)
-//     //@ts-ignore
-//     const x = await window.ethereum.request({
-//       method: 'wallet_switchEthereumChain',
-//       params: [{ chainId: `0x${chainId?.toString(16)}` }],
-//     })
-//     console.log(x)
-//   } catch (switchError) {
-//     // This error code indicates that the chain has not been added to MetaMask.
-//     if (switchError.code === 4902) {
-//       console.log('This network is not available in your metamask')
-//     }
-//     console.log('Failed to switch to the network')
-//   }
-// }
