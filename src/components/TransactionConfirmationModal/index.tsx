@@ -103,7 +103,7 @@ function TransactionSubmittedContent({
 
   const { connector } = useWeb3React()
 
-  const [tenderlyForkProvider] = useTenderlyForkProvider()
+  const { tenderlyForkProvider } = useTenderlyForkProvider()
 
   const token = currencyToAdd?.wrapped
   const logoURL = useCurrencyLogoURIs(token)[0]
@@ -226,7 +226,7 @@ function L2Content({
   const transaction = useTransaction(hash)
   const confirmed = useIsTransactionConfirmed(hash)
   const transactionSuccess = transaction?.receipt?.status === 1
-  const [tenderlyForkProvider] = useTenderlyForkProvider()
+  const { tenderlyForkProvider } = useTenderlyForkProvider()
 
   // convert unix time difference to seconds
   const secondsToConfirm = transaction?.confirmedTime

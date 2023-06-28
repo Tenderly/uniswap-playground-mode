@@ -110,7 +110,7 @@ export default function Polling() {
   const blockTime = useCurrentBlockTimestamp()
   const isNftPage = useIsNftPage()
   const isLandingPage = useIsLandingPage()
-  const [tenderlyForkProvider, _, aNewTenderlyForkProvider] = useTenderlyForkProvider()
+  const { tenderlyForkProvider: provider } = useTenderlyForkProvider()
 
   const waitMsBeforeWarning =
     (chainId ? getChainInfo(chainId)?.blockWaitMsBeforeWarning : DEFAULT_MS_BEFORE_WARNING) ?? DEFAULT_MS_BEFORE_WARNING
@@ -139,11 +139,11 @@ export default function Polling() {
 
   const blockExternalLinkHref = useMemo(() => {
     if (!chainId || !blockNumber) return ''
-    if (tenderlyForkProvider) {
-      return tenderlyForkProvider?.publicUrl || ''
+    if (provider) {
+      return provider?.publicUrl || ''
     }
     return getExplorerLink(chainId, blockNumber.toString(), ExplorerDataType.BLOCK)
-  }, [blockNumber, chainId, tenderlyForkProvider])
+  }, [blockNumber, chainId, provider])
 
   if (isNftPage || isLandingPage) {
     return null

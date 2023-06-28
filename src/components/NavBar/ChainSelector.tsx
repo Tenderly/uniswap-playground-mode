@@ -70,7 +70,7 @@ export const ChainSelector = ({ leftAlign }: ChainSelectorProps) => {
   const { chainId } = useWeb3React()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const isMobile = useIsMobile()
-  const [_, isForkPending, aNewForkProvider] = useTenderlyForkProvider()
+  const { aNewTenderlyForkProvider: aNewProvider } = useTenderlyForkProvider()
 
   const theme = useTheme()
 
@@ -119,11 +119,11 @@ export const ChainSelector = ({ leftAlign }: ChainSelectorProps) => {
 
         <ChainSelectorRow
           disabled={false}
-          onSelectChain={() => aNewForkProvider(chainId)}
+          onSelectChain={() => aNewProvider(chainId)}
           targetChain={SupportedChainId.BNB}
           key="tenderly-fork"
           isTenderlyFork={true}
-          isPending={isForkPending}
+          isPending={false}
         />
       </Column>
     </NavDropdown>
