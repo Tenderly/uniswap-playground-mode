@@ -1,5 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
-import { aTenderlyFork, shareFork, TenderlyForkProvider } from 'components/Web3Status/tenderly-sdk'
+import { aTenderlyFork, shareFork, TenderlyForkProvider } from 'components/Web3Status/tenderly-fork-api'
+import { TENDERLY_CHAIN_FORK_PREFIX } from 'constants/chains'
 import { nativeOnChain } from 'constants/tokens'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { ethers } from 'ethers'
@@ -11,7 +12,7 @@ export function useActiveTenderlyFork() {
   return { tenderlyFork: useAtomValue(provider) != null, forkProvider: useAtomValue(provider) || undefined }
 }
 
-const provider = atom<null | TenderlyForkProvider>(null)
+const provider = atom<TenderlyForkProvider | undefined>(undefined)
 const providerState = atom<'CREATING' | 'RUNNING'>('RUNNING')
 
 function useANewProvider() {
@@ -41,7 +42,7 @@ function useANewProvider() {
 
       const _forkProvider = await aTenderlyFork({
         network_id: '' + chainId,
-        // chain_config: { chain_id: Number.parseInt(`7340317${chainId}`) },
+        chain_config: { chain_id: Number.parseInt(`${TENDERLY_CHAIN_FORK_PREFIX}${chainId}`) },
       })
       await shareFork(_forkProvider.forkUUID)
       updateProvider(_forkProvider)
@@ -52,14 +53,19 @@ function useANewProvider() {
   )
 }
 
-export function useTenderlyForkProvider(): [
-  TenderlyForkProvider | null,
-  boolean,
-  (chainId: number | undefined) => Promise<void>,
-  () => Promise<any>
-] {
+export function useTenderlyForkProvider(): {
+  tenderlyForkProvider?: TenderlyForkProvider
+  isPlayground: boolean
+  aNewTenderlyForkProvider: (chainId?: number) => Promise<void>
+  discardPlayground: () => Promise<void>
+} {
   const prov = useAtomValue(provider)
-  return [prov, prov != null, useANewProvider(), usePlaygroundRemover()]
+  return {
+    tenderlyForkProvider: prov,
+    isPlayground: !!prov,
+    aNewTenderlyForkProvider: useANewProvider(),
+    discardPlayground: usePlaygroundRemover(),
+  }
 }
 
 async function topUpConnectedSigner(forkProvider: TenderlyForkProvider) {
@@ -117,6 +123,6 @@ function usePlaygroundRemover() {
   const setProvider = useUpdateAtom(provider)
   return useCallback(async () => {
     await currentProvider?.removeFork()
-    setProvider(null)
+    setProvider(undefined)
   }, [currentProvider, setProvider])
 }

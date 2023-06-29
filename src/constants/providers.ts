@@ -4,6 +4,7 @@ import { deepCopy } from '@ethersproject/properties'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { isPlain } from '@reduxjs/toolkit'
 import { SupportedChainId } from 'constants/chains'
+import { useTenderlyForkProvider } from 'hooks/useTenderlyFork'
 
 import { AVERAGE_L1_BLOCK_TIME } from './chainInfo'
 import { CHAIN_IDS_TO_NAMES } from './chains'
@@ -54,6 +55,7 @@ class AppJsonRpcProvider extends StaticJsonRpcProvider {
   }
 }
 
+const NullProvider = new AppJsonRpcProvider(SupportedChainId.MAINNET)
 /**
  * These are the only JsonRpcProviders used directly by the interface.
  */
@@ -70,4 +72,33 @@ export const RPC_PROVIDERS: { [key in SupportedChainId]: StaticJsonRpcProvider }
   [SupportedChainId.CELO]: new AppJsonRpcProvider(SupportedChainId.CELO),
   [SupportedChainId.CELO_ALFAJORES]: new AppJsonRpcProvider(SupportedChainId.CELO_ALFAJORES),
   [SupportedChainId.BNB]: new AppJsonRpcProvider(SupportedChainId.BNB),
+  [SupportedChainId.T_MAINNET]: NullProvider,
+  [SupportedChainId.T_GOERLI]: NullProvider,
+  [SupportedChainId.T_SEPOLIA]: NullProvider,
+  [SupportedChainId.T_ARBITRUM_ONE]: NullProvider,
+  [SupportedChainId.T_ARBITRUM_GOERLI]: NullProvider,
+  [SupportedChainId.T_OPTIMISM]: NullProvider,
+  [SupportedChainId.T_OPTIMISM_GOERLI]: NullProvider,
+  [SupportedChainId.T_POLYGON]: NullProvider,
+  [SupportedChainId.T_POLYGON_MUMBAI]: NullProvider,
+  [SupportedChainId.T_CELO]: NullProvider,
+  [SupportedChainId.T_CELO_ALFAJORES]: NullProvider,
+  [SupportedChainId.T_BNB]: NullProvider,
+}
+
+export function useJsonRpcProvider(chainId: SupportedChainId | undefined) {
+  const tenderlyProvider = useTenderlyForkProvider()
+  if (chainId == undefined) {
+    return undefined
+  }
+  const staticChainProvider = RPC_PROVIDERS[chainId]
+  if (staticChainProvider == NullProvider) {
+    console.log('Going back to Mainnet')
+    return new StaticJsonRpcProvider(tenderlyProvider.tenderlyForkProvider?.rpcUrl)
+  }
+
+  if (staticChainProvider) {
+    return staticChainProvider
+  }
+  return null
 }

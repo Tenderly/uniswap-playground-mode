@@ -1,6 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
 import { parseLocalActivity } from 'components/AccountDrawer/MiniPortfolio/Activity/parseLocal'
-import { PortfolioLogo } from 'components/AccountDrawer/MiniPortfolio/PortfolioLogo'
 import PortfolioRow from 'components/AccountDrawer/MiniPortfolio/PortfolioRow'
 import Column from 'components/Column'
 import { useAllTokensMultichain } from 'hooks/Tokens'
@@ -32,12 +31,12 @@ function TransactionPopupContent({ tx, chainId }: { tx: TransactionDetails; chai
       left={
         success ? (
           <Column>
-            <PortfolioLogo
+            {/* <PortfolioLogo
               chainId={chainId}
               currencies={activity.currencies}
               images={activity.logos}
               accountAddress={activity.otherAccount}
-            />
+            /> */}
           </Column>
         ) : (
           <PopupAlertTriangle />

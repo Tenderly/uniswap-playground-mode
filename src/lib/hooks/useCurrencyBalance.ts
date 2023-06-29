@@ -33,7 +33,7 @@ export function useNativeCurrencyBalances(uncheckedAddresses?: (string | undefin
   )
 
   const results = useSingleContractMultipleData(multicallContract, 'getEthBalance', validAddressInputs)
-
+  console.log('useNativeCurrencyBalances balancs', { multicallContract, validAddressInputs }, results)
   return useMemo(
     () =>
       validAddressInputs.reduce<{ [address: string]: CurrencyAmount<Currency> }>((memo, [address], i) => {
@@ -57,12 +57,12 @@ export function useTokenBalancesWithLoadingIndicator(
   tokens?: (Token | undefined)[]
 ): [{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }, boolean] {
   const { chainId } = useWeb3React() // we cannot fetch balances cross-chain
+  console.log('useTokenBalancesWithLoadingIndicator tokens', tokens)
   const validatedTokens: Token[] = useMemo(
     () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false && t?.chainId === chainId) ?? [],
     [chainId, tokens]
   )
   const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens])
-
   const balances = useMultipleContractSingleData(
     validatedTokenAddresses,
     ERC20Interface,
@@ -121,12 +121,15 @@ export function useCurrencyBalances(
   const tokenBalances = useTokenBalances(account, tokens)
   const containsETH: boolean = useMemo(() => currencies?.some((currency) => currency?.isNative) ?? false, [currencies])
   const ethBalance = useNativeCurrencyBalances(useMemo(() => (containsETH ? [account] : []), [containsETH, account]))
-
+  console.log('useCurrencyBalances currencies', { containsETH, currencies, ethBalance, account })
   return useMemo(
     () =>
       currencies?.map((currency) => {
         if (!account || !currency || currency.chainId !== chainId) return undefined
+        // console.log('UseCurrencyBalance', currency)
+        // if (currency.isToken) console.log('UseCurrencyBalance token balance', tokenBalances[currency.address])
         if (currency.isToken) return tokenBalances[currency.address]
+        // if (currency.isNative) console.log('UseCurrencyBalance native balance', ethBalance[account])
         if (currency.isNative) return ethBalance[account]
         return undefined
       }) ?? [],
@@ -138,6 +141,14 @@ export default function useCurrencyBalance(
   account?: string,
   currency?: Currency
 ): CurrencyAmount<Currency> | undefined {
+  console.log(
+    'UseCurrencyBalance SINGLE',
+    currency,
+    useCurrencyBalances(
+      account,
+      useMemo(() => [currency], [currency])
+    )
+  )
   return useCurrencyBalances(
     account,
     useMemo(() => [currency], [currency])

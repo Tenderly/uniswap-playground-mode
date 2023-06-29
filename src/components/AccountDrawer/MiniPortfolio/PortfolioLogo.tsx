@@ -97,6 +97,7 @@ export function PortfolioLogo({
   const { avatar, loading } = useENSAvatar(accountAddress, false)
   const theme = useTheme()
 
+  console.log('Portfolio logo::currencies', currencies)
   const [src, nextSrc] = useTokenLogoSource(currencies?.[0]?.wrapped.address, chainId, currencies?.[0]?.isNative)
   const [src2, nextSrc2] = useTokenLogoSource(currencies?.[1]?.wrapped.address, chainId, currencies?.[1]?.isNative)
 

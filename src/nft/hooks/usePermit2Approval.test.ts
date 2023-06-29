@@ -1,8 +1,8 @@
 import { CurrencyAmount } from '@uniswap/sdk-core'
 import { USDC_MAINNET } from '@uniswap/smart-order-router'
-import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
 import usePermit2Allowance, { AllowanceState } from 'hooks/usePermit2Allowance'
 import { renderHook } from 'test-utils/render'
+import { UNIVERSAL_ROUTER_ADDRESS } from 'universal-router-tenderly'
 
 import usePermit2Approval from './usePermit2Approval'
 

@@ -1,12 +1,12 @@
 import { sendAnalyticsEvent } from '@uniswap/analytics'
 import { InterfaceEventName } from '@uniswap/analytics-events'
 import { CurrencyAmount, SupportedChainId, Token } from '@uniswap/sdk-core'
-import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { isSupportedChain } from 'constants/chains'
 import usePermit2Allowance, { AllowanceState } from 'hooks/usePermit2Allowance'
 import { useCallback, useMemo, useState } from 'react'
 import invariant from 'tiny-invariant'
+import { UNIVERSAL_ROUTER_ADDRESS } from 'universal-router-tenderly'
 
 function getURAddress(chainId?: number, nftURAddress?: string) {
   if (!chainId) return
