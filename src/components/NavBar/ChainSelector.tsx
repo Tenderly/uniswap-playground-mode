@@ -113,18 +113,8 @@ export const ChainSelector = ({ leftAlign }: ChainSelectorProps) => {
             targetChain={selectorChain}
             key={selectorChain}
             isPending={selectorChain === pendingChainId}
-            isTenderlyFork={false}
           />
         ))}
-
-        <ChainSelectorRow
-          disabled={false}
-          onSelectChain={() => aNewProvider(chainId)}
-          targetChain={SupportedChainId.BNB}
-          key="tenderly-fork"
-          isTenderlyFork={true}
-          isPending={false}
-        />
       </Column>
     </NavDropdown>
   )

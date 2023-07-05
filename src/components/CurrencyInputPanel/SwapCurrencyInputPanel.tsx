@@ -241,8 +241,6 @@ export default function SwapCurrencyInputPanel({
 
   const chainAllowed = isSupportedChain(chainId)
 
-  console.log('Hide balance', { hideBalance, currency, selectedCurrencyBalance })
-
   return (
     <InputPanel id={id} hideInput={hideInput} {...rest}>
       {locked && (

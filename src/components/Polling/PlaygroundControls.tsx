@@ -34,9 +34,7 @@ export default function PlaygroundControls() {
     if (!tenderlyForkProvider) {
       return
     }
-    console.log('Selecting chain', Number.parseInt(tenderlyForkProvider.baseChainId))
     await selectChain(Number.parseInt(tenderlyForkProvider.baseChainId))
-    console.log('Removing')
     await discardPlayground()
   }, [discardPlayground, tenderlyForkProvider, selectChain])
 

@@ -1,6 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
 import { aTenderlyFork, shareFork, TenderlyForkProvider } from 'components/Web3Status/tenderly-fork-api'
-import { TENDERLY_CHAIN_FORK_PREFIX } from 'constants/chains'
+import { removeTenderlyChainIdPrefix, TENDERLY_CHAIN_FORK_PREFIX } from 'constants/chains'
 import { nativeOnChain } from 'constants/tokens'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { ethers } from 'ethers'
@@ -39,7 +39,7 @@ function useANewProvider() {
       if (chainId == -1 && currentChainId) {
         chainId = currentChainId
       }
-
+      chainId = removeTenderlyChainIdPrefix(chainId)
       const _forkProvider = await aTenderlyFork({
         network_id: '' + chainId,
         chain_config: { chain_id: Number.parseInt(`${TENDERLY_CHAIN_FORK_PREFIX}${chainId}`) },

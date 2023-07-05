@@ -66,17 +66,10 @@ interface ChainSelectorRowProps {
   targetChain: SupportedChainId
   onSelectChain: (targetChain: number) => void
   isPending: boolean
-  isTenderlyFork: boolean
 }
-export default function ChainSelectorRow({
-  disabled,
-  targetChain,
-  onSelectChain,
-  isPending,
-  isTenderlyFork,
-}: ChainSelectorRowProps) {
+export default function ChainSelectorRow({ disabled, targetChain, onSelectChain, isPending }: ChainSelectorRowProps) {
   const { chainId } = useWeb3React()
-  const active = !isTenderlyFork && chainId === targetChain
+  const active = chainId === targetChain
   const { label, logoUrl } = getChainInfo(targetChain)
 
   const theme = useTheme()
@@ -89,11 +82,9 @@ export default function ChainSelectorRow({
       }}
       data-testid={`chain-selector-option-${label.toLowerCase()}`}
     >
-      {!isTenderlyFork && <Logo src={logoUrl} alt={label} />}
-      <Label>
-        {isTenderlyFork ? 'Fork current chain' : ''}
-        {!isTenderlyFork && label}
-      </Label>
+      <Logo src={logoUrl} alt={label} />
+      <Label>{label}</Label>
+
       {disabled && (
         <CaptionText>
           <Trans>Unsupported by your wallet</Trans>

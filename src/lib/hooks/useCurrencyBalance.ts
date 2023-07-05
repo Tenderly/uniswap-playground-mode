@@ -33,7 +33,6 @@ export function useNativeCurrencyBalances(uncheckedAddresses?: (string | undefin
   )
 
   const results = useSingleContractMultipleData(multicallContract, 'getEthBalance', validAddressInputs)
-  console.log('useNativeCurrencyBalances balancs', { multicallContract, validAddressInputs }, results)
   return useMemo(
     () =>
       validAddressInputs.reduce<{ [address: string]: CurrencyAmount<Currency> }>((memo, [address], i) => {
@@ -57,7 +56,6 @@ export function useTokenBalancesWithLoadingIndicator(
   tokens?: (Token | undefined)[]
 ): [{ [tokenAddress: string]: CurrencyAmount<Token> | undefined }, boolean] {
   const { chainId } = useWeb3React() // we cannot fetch balances cross-chain
-  console.log('useTokenBalancesWithLoadingIndicator tokens', tokens)
   const validatedTokens: Token[] = useMemo(
     () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false && t?.chainId === chainId) ?? [],
     [chainId, tokens]
@@ -121,7 +119,7 @@ export function useCurrencyBalances(
   const tokenBalances = useTokenBalances(account, tokens)
   const containsETH: boolean = useMemo(() => currencies?.some((currency) => currency?.isNative) ?? false, [currencies])
   const ethBalance = useNativeCurrencyBalances(useMemo(() => (containsETH ? [account] : []), [containsETH, account]))
-  console.log('useCurrencyBalances currencies', { containsETH, currencies, ethBalance, account })
+
   return useMemo(
     () =>
       currencies?.map((currency) => {
@@ -141,14 +139,6 @@ export default function useCurrencyBalance(
   account?: string,
   currency?: Currency
 ): CurrencyAmount<Currency> | undefined {
-  console.log(
-    'UseCurrencyBalance SINGLE',
-    currency,
-    useCurrencyBalances(
-      account,
-      useMemo(() => [currency], [currency])
-    )
-  )
   return useCurrencyBalances(
     account,
     useMemo(() => [currency], [currency])

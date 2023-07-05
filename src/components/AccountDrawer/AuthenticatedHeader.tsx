@@ -165,7 +165,6 @@ const LogOutCentered = styled(LogOut)`
 `
 
 export default function AuthenticatedHeader({ account, openSettings }: { account: string; openSettings: () => void }) {
-  console.log('Auth Header')
   const { connector, ENSName } = useWeb3React()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()

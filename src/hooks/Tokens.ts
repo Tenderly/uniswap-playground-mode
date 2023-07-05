@@ -1,7 +1,7 @@
 import { Currency, Token } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { getChainInfo } from 'constants/chainInfo'
-import { SupportedChainId, TENDERLY_CHAIN_FORK_PREFIX } from 'constants/chains'
+import { removeTenderlyChainIdPrefix, SupportedChainId } from 'constants/chains'
 import { DEFAULT_INACTIVE_LIST_URLS, DEFAULT_LIST_OF_LISTS } from 'constants/lists'
 import { useCurrencyFromMap, useTokenFromMapOrNetwork } from 'lib/hooks/useCurrency'
 import { getTokenFilter } from 'lib/hooks/useTokenList/filtering'
@@ -22,8 +22,7 @@ function useTokensFromMap(tokenMap: TokenAddressMap, chainId: Maybe<SupportedCha
   return useMemo(() => {
     if (!chainId) return {}
 
-    const actualChainId =
-      (chainId + '').indexOf(TENDERLY_CHAIN_FORK_PREFIX) == 0 ? Number.parseInt((chainId + '').substring(7)) : chainId
+    const actualChainId = removeTenderlyChainIdPrefix(chainId)
     // reduce to just tokens
     const justTokens = Object.keys(tokenMap[actualChainId] ?? {}).reduce<{ [address: string]: Token }>(
       (newMap, address) => {
@@ -74,7 +73,6 @@ export function useAllTokensMultichain(): ChainTokenMap {
 /** Returns all tokens from the default list + user added tokens */
 export function useDefaultActiveTokens(chainId: Maybe<SupportedChainId>): { [address: string]: Token } {
   const defaultListTokens = useCombinedActiveList()
-  console.log('useDefaultActiveTokens dlt', defaultListTokens)
   const tokensFromMap = useTokensFromMap(defaultListTokens, chainId)
   const userAddedTokens = useUserAddedTokens()
   return useMemo(() => {

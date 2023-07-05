@@ -148,3 +148,9 @@ export function isPolygonChain(chainId: number): chainId is SupportedChainId.POL
 }
 
 export const TENDERLY_CHAIN_FORK_PREFIX = '7340317'
+
+export function removeTenderlyChainIdPrefix(chainId: string | SupportedChainId) {
+  return Number.parseInt(
+    (chainId + '').indexOf(TENDERLY_CHAIN_FORK_PREFIX) == 0 ? (chainId + '').substring(7) : '' + chainId
+  )
+}
