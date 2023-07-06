@@ -12,11 +12,12 @@ export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<Tenderly
   const forkId = forkResponse.data.root_transaction.fork_id
 
   const rpcUrl = `https://rpc.tenderly.co/fork/${forkId}`
-
   const forkProvider = new JsonRpcProvider(rpcUrl)
 
   const blockNumberStr = (forkResponse.data.root_transaction.receipt.blockNumber as string).replace('0x', '')
   const blockNumber = Number.parseInt(blockNumberStr, 16)
+  const privateUrl = `https://dashboard.tenderly.co/account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
+  const publicUrl = `https://dashboard.tenderly.co/shared/fork/${forkId}/transactions`
 
   console.info(
     `\nForked ${fork.network_id} 
@@ -25,9 +26,6 @@ export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<Tenderly
   fork ID: ${forkId} 
 `
   )
-
-  const privateUrl = `https://dashboard.tenderly.co/account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
-  const publicUrl = `https://dashboard.tenderly.co/shared/fork/${forkId}/transactions`
   console.info('Fork:', privateUrl)
 
   return {
@@ -44,6 +42,13 @@ export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<Tenderly
   }
 }
 
+async function removeFork(forkId: string) {
+  console.log('Removing test fork', forkId)
+  return await tenderlyBaseApi.delete(
+    `account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
+  )
+}
+
 const tenderlyBaseApi = axios.create({
   baseURL: `https://api.tenderly.co/api/v1/`,
   headers: {
@@ -51,13 +56,6 @@ const tenderlyBaseApi = axios.create({
     'Content-Type': 'application/json',
   },
 })
-
-const removeFork = async (forkId: string) => {
-  console.log('Removing test fork', forkId)
-  return await tenderlyBaseApi.delete(
-    `account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
-  )
-}
 
 type TenderlyForkRequest = {
   shared?: boolean

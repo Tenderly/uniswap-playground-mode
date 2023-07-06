@@ -1,7 +1,7 @@
 import { useWeb3React } from '@web3-react/core'
 import useSelectChain from 'hooks/useSelectChain'
 import useSyncChainQuery from 'hooks/useSyncChainQuery'
-import { useTenderlyForkProvider } from 'hooks/useTenderlyFork'
+import { useTenderlyPlayground } from 'hooks/useTenderlyFork'
 import useBlockNumber from 'lib/hooks/useBlockNumber'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
@@ -9,7 +9,12 @@ import { ExplorerDataType, getExplorerLink } from 'utils/getExplorerLink'
 
 export default function PlaygroundControls() {
   const { chainId } = useWeb3React()
-  const { aNewTenderlyForkProvider, tenderlyForkProvider, isPlayground, discardPlayground } = useTenderlyForkProvider()
+  const {
+    aNewPlayground: aNewTenderlyForkProvider,
+    playgroundProvider: tenderlyForkProvider,
+    isPlayground,
+    discardPlayground,
+  } = useTenderlyPlayground()
   const selectChain = useSelectChain()
   const blockNumber = useBlockNumber()
   useSyncChainQuery()

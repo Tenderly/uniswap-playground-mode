@@ -6,7 +6,7 @@ import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { useIsLandingPage } from 'hooks/useIsLandingPage'
 import { useIsNftPage } from 'hooks/useIsNftPage'
 import useMachineTimeMs from 'hooks/useMachineTime'
-import { useTenderlyForkProvider } from 'hooks/useTenderlyFork'
+import { useTenderlyPlayground } from 'hooks/useTenderlyFork'
 import useBlockNumber from 'lib/hooks/useBlockNumber'
 import ms from 'ms.macro'
 import { useEffect, useMemo, useState } from 'react'
@@ -110,7 +110,7 @@ export default function Polling() {
   const blockTime = useCurrentBlockTimestamp()
   const isNftPage = useIsNftPage()
   const isLandingPage = useIsLandingPage()
-  const { tenderlyForkProvider: provider } = useTenderlyForkProvider()
+  const { playgroundProvider: provider } = useTenderlyPlayground()
 
   const waitMsBeforeWarning =
     (chainId ? getChainInfo(chainId)?.blockWaitMsBeforeWarning : DEFAULT_MS_BEFORE_WARNING) ?? DEFAULT_MS_BEFORE_WARNING

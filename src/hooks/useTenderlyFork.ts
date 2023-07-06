@@ -8,14 +8,29 @@ import { atom } from 'jotai'
 import { useAtomValue, useUpdateAtom } from 'jotai/utils'
 import { useCallback } from 'react'
 
+const provider = atom<TenderlyForkProvider | undefined>(undefined)
+const providerState = atom<'CREATING' | 'RUNNING'>('RUNNING')
+
 export function useActiveTenderlyFork() {
   return { tenderlyFork: useAtomValue(provider) != null, forkProvider: useAtomValue(provider) || undefined }
 }
 
-const provider = atom<TenderlyForkProvider | undefined>(undefined)
-const providerState = atom<'CREATING' | 'RUNNING'>('RUNNING')
+export function useTenderlyPlayground(): {
+  playgroundProvider?: TenderlyForkProvider
+  isPlayground: boolean
+  aNewPlayground: (chainId?: number) => Promise<void>
+  discardPlayground: () => Promise<void>
+} {
+  const prov = useAtomValue(provider)
+  return {
+    playgroundProvider: prov,
+    isPlayground: !!prov,
+    aNewPlayground: useNewFork(),
+    discardPlayground: useRemoveFork(),
+  }
+}
 
-function useANewProvider() {
+function useNewFork() {
   const currentProvider = useAtomValue(provider)
   const updateProvider = useUpdateAtom(provider)
   const updateProviderState = useUpdateAtom(providerState)
@@ -51,21 +66,6 @@ function useANewProvider() {
     },
     [currentProvider, updateProvider, updateProviderState, currentChainId]
   )
-}
-
-export function useTenderlyForkProvider(): {
-  tenderlyForkProvider?: TenderlyForkProvider
-  isPlayground: boolean
-  aNewTenderlyForkProvider: (chainId?: number) => Promise<void>
-  discardPlayground: () => Promise<void>
-} {
-  const prov = useAtomValue(provider)
-  return {
-    tenderlyForkProvider: prov,
-    isPlayground: !!prov,
-    aNewTenderlyForkProvider: useANewProvider(),
-    discardPlayground: usePlaygroundRemover(),
-  }
 }
 
 async function topUpConnectedSigner(forkProvider: TenderlyForkProvider) {
@@ -118,7 +118,7 @@ async function addForkToMetamask(forkProvider: TenderlyForkProvider) {
   }
 }
 
-function usePlaygroundRemover() {
+function useRemoveFork() {
   const currentProvider = useAtomValue(provider)
   const setProvider = useUpdateAtom(provider)
   return useCallback(async () => {

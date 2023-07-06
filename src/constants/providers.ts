@@ -4,7 +4,7 @@ import { deepCopy } from '@ethersproject/properties'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { isPlain } from '@reduxjs/toolkit'
 import { SupportedChainId } from 'constants/chains'
-import { useTenderlyForkProvider } from 'hooks/useTenderlyFork'
+import { useTenderlyPlayground } from 'hooks/useTenderlyFork'
 
 import { AVERAGE_L1_BLOCK_TIME } from './chainInfo'
 import { CHAIN_IDS_TO_NAMES } from './chains'
@@ -87,14 +87,14 @@ export const RPC_PROVIDERS: { [key in SupportedChainId]: StaticJsonRpcProvider }
 }
 
 export function useJsonRpcProvider(chainId: SupportedChainId | undefined) {
-  const tenderlyProvider = useTenderlyForkProvider()
+  const tenderlyProvider = useTenderlyPlayground()
   if (chainId == undefined) {
     return undefined
   }
   const staticChainProvider = RPC_PROVIDERS[chainId]
   if (staticChainProvider == NullProvider) {
     console.log('Going back to Mainnet')
-    return new StaticJsonRpcProvider(tenderlyProvider.tenderlyForkProvider?.rpcUrl)
+    return new StaticJsonRpcProvider(tenderlyProvider.playgroundProvider?.rpcUrl)
   }
 
   if (staticChainProvider) {
