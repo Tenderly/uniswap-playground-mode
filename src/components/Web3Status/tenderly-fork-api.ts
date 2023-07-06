@@ -26,11 +26,9 @@ export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<Tenderly
 `
   )
 
-  console.info(
-    `https://dashboard.tenderly.co/account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
-  )
-
+  const privateUrl = `https://dashboard.tenderly.co/account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
   const publicUrl = `https://dashboard.tenderly.co/shared/fork/${forkId}/transactions`
+  console.info('Fork:', privateUrl)
 
   return {
     rpcUrl,
@@ -40,6 +38,7 @@ export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<Tenderly
     removeFork: () => removeFork(forkId),
     networkId: fork.network_id as any,
     publicUrl,
+    privateUrl,
     chainId: forkResponse.data.simulation_fork.chain_config.chain_id,
     baseChainId: fork.network_id,
   }
@@ -96,6 +95,7 @@ export type TenderlyForkProvider = {
   chainId: number
   networkId: number
   publicUrl: string
+  privateUrl: string
   baseChainId: string
   /**
    * map from address to given address' balance
