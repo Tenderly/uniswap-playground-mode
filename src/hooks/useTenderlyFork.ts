@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { aTenderlyFork, shareFork, TenderlyForkProvider } from 'components/Web3Status/tenderly-fork-api'
+import { aTenderlyFork, TenderlyForkProvider } from 'components/Web3Status/tenderly-fork-api'
 import { removeTenderlyChainIdPrefix, TENDERLY_CHAIN_FORK_PREFIX } from 'constants/chains'
 import { nativeOnChain } from 'constants/tokens'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
@@ -43,8 +43,8 @@ function useANewProvider() {
       const _forkProvider = await aTenderlyFork({
         network_id: '' + chainId,
         chain_config: { chain_id: Number.parseInt(`${TENDERLY_CHAIN_FORK_PREFIX}${chainId}`) },
+        shared: true,
       })
-      await shareFork(_forkProvider.forkUUID)
       updateProvider(_forkProvider)
       await addForkToMetamask(_forkProvider)
       await topUpConnectedSigner(_forkProvider)

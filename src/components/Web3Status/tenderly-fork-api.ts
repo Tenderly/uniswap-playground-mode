@@ -59,12 +59,8 @@ const removeFork = async (forkId: string) => {
   )
 }
 
-export async function shareFork(uuid: string) {
-  const forkUrl = `https://api.tenderly.co/api/v1/account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${uuid}/share`
-  return tenderlyBaseApi.post(forkUrl, null)
-}
-
 type TenderlyForkRequest = {
+  shared?: boolean
   block_number?: number
   network_id: string
   transaction_index?: number
