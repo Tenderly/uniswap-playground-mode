@@ -24,5 +24,9 @@ function fetchSchema(url, outputFile) {
     })
 }
 
-fetchSchema(process.env.THE_GRAPH_SCHEMA_ENDPOINT, thegraphConfig.schema)
-fetchSchema(process.env.REACT_APP_AWS_API_ENDPOINT, dataConfig.schema)
+// hardcoding the schema for purpose of demonstrating the playground.
+
+// fetchSchema(process.env.THE_GRAPH_SCHEMA_ENDPOINT, thegraphConfig.schema)
+// fetchSchema(process.env.REACT_APP_AWS_API_ENDPOINT, dataConfig.schema)
+exec('cp src/graphql/hardcoded/data/schema.graphql src/graphql/data/schema.graphql')
+exec('cp src/graphql/hardcoded/thegraph/schema.graphql src/graphql/thegraph/schema.graphql')

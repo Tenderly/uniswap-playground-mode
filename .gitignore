@@ -12,7 +12,8 @@
 /src/**/__generated__
 
 # schema
-schema.graphql
+src/graphql/data/schema.graphql
+src/graphql/thegraph
 
 # dependencies
 /node_modules
