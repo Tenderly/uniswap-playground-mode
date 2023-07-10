@@ -121,10 +121,6 @@ interface ContentArgs {
   tenderlyForkProvider?: TenderlyForkProvider
 }
 
-function tuck(hash: string): string {
-  return `${hash.slice(hash.indexOf('0x') == 0 ? 0 : 2, 8)}...${hash.slice(-4)}`
-}
-
 function getContent(args: ContentArgs): PendingModalStep {
   const { step, approvalCurrency, swapConfirmed, swapPending, tokenApprovalPending, trade, swapTxHash, chainId } = args
   const explorerLink = args.tenderlyForkProvider

@@ -1,11 +1,11 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import axios, { AxiosResponse } from 'axios'
 
-const { REACT_APP_TENDERLY_PROJECT_SLUG, REACT_APP_TENDERLY_ACCESS_KEY, REACT_APP_TENDERLY_USERNAME } = process.env
+const { TENDERLY_PROJECT_SLUG, TENDERLY_ACCESS_KEY, TENDERLY_USERNAME } = process.env
 
 export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<TenderlyForkProvider> {
   const forkResponse = await tenderlyBaseApi.post(
-    `account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/`,
+    `account/${TENDERLY_USERNAME}/project/${TENDERLY_PROJECT_SLUG}/fork/`,
     fork
   )
 
@@ -16,7 +16,7 @@ export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<Tenderly
 
   const blockNumberStr = (forkResponse.data.root_transaction.receipt.blockNumber as string).replace('0x', '')
   const blockNumber = Number.parseInt(blockNumberStr, 16)
-  const privateUrl = `https://dashboard.tenderly.co/account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
+  const privateUrl = `https://dashboard.tenderly.co/account/${TENDERLY_USERNAME}/project/${TENDERLY_PROJECT_SLUG}/fork/${forkId}`
   const publicUrl = `https://dashboard.tenderly.co/shared/fork/${forkId}/transactions`
 
   console.info(
@@ -44,15 +44,13 @@ export async function aTenderlyFork(fork: TenderlyForkRequest): Promise<Tenderly
 
 async function removeFork(forkId: string) {
   console.log('Removing test fork', forkId)
-  return await tenderlyBaseApi.delete(
-    `account/${REACT_APP_TENDERLY_USERNAME}/project/${REACT_APP_TENDERLY_PROJECT_SLUG}/fork/${forkId}`
-  )
+  return await tenderlyBaseApi.delete(`account/${TENDERLY_USERNAME}/project/${TENDERLY_PROJECT_SLUG}/fork/${forkId}`)
 }
 
 const tenderlyBaseApi = axios.create({
   baseURL: `https://api.tenderly.co/api/v1/`,
   headers: {
-    'X-Access-Key': REACT_APP_TENDERLY_ACCESS_KEY || '',
+    'X-Access-Key': TENDERLY_ACCESS_KEY || '',
     'Content-Type': 'application/json',
   },
 })

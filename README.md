@@ -2,13 +2,18 @@
 
 This repository is demonstrating adding the Playground capability, using Tenderly Forks as the implementation. 
 
+
 Notes:
 
 - The graphql schema and supported chains are hard-coded. This repository will remain out of sync compared to latest.
 - Adding the playground mode required connecting to a dynamically generated network (Tenderly fork), which has chainID different from the chainID of the original chain. This mostly includes extension of static mappings addresses of ERC-20 token and Uniswap contracts (such as UniversalRouter). The addresses of these resources on the fork chain are the same as addresses on the original chain. See [Addresses mapping](src/constants/addresses.ts) and `[Tokens mapping](src/constants/tokens.ts).
 
-## The playground mode
-  - Read more aboyt 
+## Running the app
+⚠️ This Uniswap fork is for demonstrational purposes only! As a proof of concept, is not considered a fully reliable tool.
+
+To run the dapp, you'll need to edit the `.env` file and [update your username, project slug, and the access key](https://docs.tenderly.co/other/platform-access).
+
+## From the official repository docs
 
 [![codecov](https://codecov.io/gh/Uniswap/interface/branch/main/graph/badge.svg?token=YVT2Y86O82)](https://codecov.io/gh/Uniswap/interface)
 
