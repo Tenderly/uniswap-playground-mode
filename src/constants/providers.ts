@@ -4,7 +4,7 @@ import { deepCopy } from '@ethersproject/properties'
 import { StaticJsonRpcProvider } from '@ethersproject/providers'
 import { isPlain } from '@reduxjs/toolkit'
 import { SupportedChainId } from 'constants/chains'
-import { useTenderlyPlayground } from 'hooks/useTenderlyFork'
+import { useTenderlyPlayground } from 'hooks/useTenderlyPlayground'
 
 import { AVERAGE_L1_BLOCK_TIME } from './chainInfo'
 import { CHAIN_IDS_TO_NAMES } from './chains'

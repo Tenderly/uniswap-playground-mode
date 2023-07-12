@@ -6,7 +6,7 @@ This repository is demonstrating adding the Playground capability, using Tenderl
 Notes:
 
 - The graphql schema and supported chains are hard-coded. This repository will remain out of sync compared to latest.
-- Adding the playground mode required connecting to a dynamically generated network (Tenderly fork), which has chainID different from the chainID of the original chain. This mostly includes extension of static mappings addresses of ERC-20 token and Uniswap contracts (such as UniversalRouter). The addresses of these resources on the fork chain are the same as addresses on the original chain. See [Addresses mapping](src/constants/addresses.ts) and `[Tokens mapping](src/constants/tokens.ts).
+- Adding the playground mode required connecting to a dynamically generated network (Tenderly fork), which has chainID different from the chainID of the original chain. This mostly includes extension of static mappings addresses of ERC-20 tokens and Uniswap contracts (such as UniversalRouter). The addresses of these resources on the fork chain are the same as addresses on the original chain. See [Addresses mapping](src/constants/addresses.ts) and [Tokens mapping](src/constants/tokens.ts).
 
 ## Running the app
 ⚠️ This Uniswap fork is for demonstrational purposes only! As a proof of concept, is not considered a fully reliable tool.

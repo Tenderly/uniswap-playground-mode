@@ -1,4 +1,4 @@
-import { useActiveTenderlyFork } from 'hooks/useTenderlyFork'
+import { useActiveTenderlyFork } from 'hooks/useTenderlyPlayground'
 import styled from 'styled-components/macro'
 
 const Label = styled.div`

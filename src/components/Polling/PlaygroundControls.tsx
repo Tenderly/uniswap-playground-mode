@@ -1,7 +1,7 @@
 import { useWeb3React } from '@web3-react/core'
 import useSelectChain from 'hooks/useSelectChain'
 import useSyncChainQuery from 'hooks/useSyncChainQuery'
-import { useTenderlyPlayground } from 'hooks/useTenderlyFork'
+import { useTenderlyPlayground } from 'hooks/useTenderlyPlayground'
 import useBlockNumber from 'lib/hooks/useBlockNumber'
 import { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'

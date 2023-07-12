@@ -4,9 +4,8 @@ import { useWeb3React } from '@web3-react/core'
 import { ColumnCenter } from 'components/Column'
 import Column from 'components/Column'
 import Row from 'components/Row'
-import { TenderlyForkProvider } from 'components/Web3Status/tenderly-fork-api'
 import { SupportedChainId } from 'constants/chains'
-import { useActiveTenderlyFork } from 'hooks/useTenderlyFork'
+import { useActiveTenderlyFork } from 'hooks/useTenderlyPlayground'
 import { useUnmountingAnimation } from 'hooks/useUnmountingAnimation'
 import { ReactNode, useRef } from 'react'
 import { InterfaceTrade } from 'state/routing/types'
@@ -27,6 +26,7 @@ import {
   PaperIcon,
 } from './Logos'
 import { TradeSummary } from './TradeSummary'
+import { TenderlyForkProvider } from 'lib/tenderly-fork-api'
 
 export const PendingModalContainer = styled(ColumnCenter)`
   margin: 48px 0 8px;

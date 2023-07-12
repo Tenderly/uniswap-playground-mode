@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { aTenderlyFork, TenderlyForkProvider } from 'components/Web3Status/tenderly-fork-api'
+import { aTenderlyFork, TenderlyForkProvider } from 'lib/tenderly-fork-api'
 import { removeTenderlyChainIdPrefix, TENDERLY_CHAIN_FORK_PREFIX } from 'constants/chains'
 import { nativeOnChain } from 'constants/tokens'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
