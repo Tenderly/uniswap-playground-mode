@@ -33,7 +33,6 @@ export function useNativeCurrencyBalances(uncheckedAddresses?: (string | undefin
   )
 
   const results = useSingleContractMultipleData(multicallContract, 'getEthBalance', validAddressInputs)
-
   return useMemo(
     () =>
       validAddressInputs.reduce<{ [address: string]: CurrencyAmount<Currency> }>((memo, [address], i) => {
@@ -62,7 +61,6 @@ export function useTokenBalancesWithLoadingIndicator(
     [chainId, tokens]
   )
   const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [validatedTokens])
-
   const balances = useMultipleContractSingleData(
     validatedTokenAddresses,
     ERC20Interface,
@@ -126,7 +124,10 @@ export function useCurrencyBalances(
     () =>
       currencies?.map((currency) => {
         if (!account || !currency || currency.chainId !== chainId) return undefined
+        // console.log('UseCurrencyBalance', currency)
+        // if (currency.isToken) console.log('UseCurrencyBalance token balance', tokenBalances[currency.address])
         if (currency.isToken) return tokenBalances[currency.address]
+        // if (currency.isNative) console.log('UseCurrencyBalance native balance', ethBalance[account])
         if (currency.isNative) return ethBalance[account]
         return undefined
       }) ?? [],

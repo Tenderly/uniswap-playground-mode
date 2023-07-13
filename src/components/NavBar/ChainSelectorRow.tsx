@@ -84,6 +84,7 @@ export default function ChainSelectorRow({ disabled, targetChain, onSelectChain,
     >
       <Logo src={logoUrl} alt={label} />
       <Label>{label}</Label>
+
       {disabled && (
         <CaptionText>
           <Trans>Unsupported by your wallet</Trans>

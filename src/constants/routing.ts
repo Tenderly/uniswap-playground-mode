@@ -208,6 +208,81 @@ export const COMMON_BASES: ChainCurrencyList = {
     BTC_BSC,
     BUSD_BSC,
   ],
+  //
+  [SupportedChainId.T_MAINNET]: [
+    nativeOnChain(SupportedChainId.T_MAINNET),
+    DAI,
+    USDC_MAINNET,
+    USDT,
+    WBTC,
+    WRAPPED_NATIVE_CURRENCY[SupportedChainId.MAINNET] as Token,
+  ],
+  [SupportedChainId.T_GOERLI]: [
+    nativeOnChain(SupportedChainId.T_GOERLI),
+    WRAPPED_NATIVE_CURRENCY[SupportedChainId.GOERLI] as Token,
+  ],
+  [SupportedChainId.T_SEPOLIA]: [
+    nativeOnChain(SupportedChainId.T_SEPOLIA),
+    WRAPPED_NATIVE_CURRENCY[SupportedChainId.SEPOLIA] as Token,
+  ],
+  [SupportedChainId.T_ARBITRUM_ONE]: [
+    nativeOnChain(SupportedChainId.T_ARBITRUM_ONE),
+    DAI_ARBITRUM_ONE,
+    USDC_ARBITRUM,
+    USDT_ARBITRUM_ONE,
+    WBTC_ARBITRUM_ONE,
+    WRAPPED_NATIVE_CURRENCY[SupportedChainId.ARBITRUM_ONE] as Token,
+  ],
+  [SupportedChainId.T_ARBITRUM_GOERLI]: [
+    nativeOnChain(SupportedChainId.T_ARBITRUM_GOERLI),
+    WRAPPED_NATIVE_CURRENCY[SupportedChainId.ARBITRUM_GOERLI] as Token,
+    USDC_ARBITRUM_GOERLI,
+  ],
+  [SupportedChainId.T_OPTIMISM]: [
+    nativeOnChain(SupportedChainId.T_OPTIMISM),
+    DAI_OPTIMISM,
+    USDC_OPTIMISM,
+    USDT_OPTIMISM,
+    WBTC_OPTIMISM,
+  ],
+  [SupportedChainId.T_OPTIMISM_GOERLI]: [nativeOnChain(SupportedChainId.T_OPTIMISM_GOERLI)],
+  [SupportedChainId.T_POLYGON]: [
+    nativeOnChain(SupportedChainId.T_POLYGON),
+    WETH_POLYGON,
+    USDC_POLYGON,
+    DAI_POLYGON,
+    USDT_POLYGON,
+    WBTC_POLYGON,
+  ],
+  [SupportedChainId.T_POLYGON_MUMBAI]: [
+    nativeOnChain(SupportedChainId.T_POLYGON_MUMBAI),
+    WRAPPED_NATIVE_CURRENCY[SupportedChainId.POLYGON_MUMBAI] as Token,
+    WETH_POLYGON_MUMBAI,
+  ],
+
+  [SupportedChainId.T_CELO]: [
+    nativeOnChain(SupportedChainId.T_CELO),
+    CEUR_CELO,
+    CUSD_CELO,
+    PORTAL_ETH_CELO,
+    PORTAL_USDC_CELO,
+    CMC02_CELO,
+  ],
+  [SupportedChainId.T_CELO_ALFAJORES]: [
+    nativeOnChain(SupportedChainId.T_CELO_ALFAJORES),
+    CUSD_CELO_ALFAJORES,
+    CEUR_CELO_ALFAJORES,
+  ],
+
+  [SupportedChainId.T_BNB]: [
+    nativeOnChain(SupportedChainId.T_BNB),
+    DAI_BSC,
+    USDC_BSC,
+    USDT_BSC,
+    ETH_BSC,
+    BTC_BSC,
+    BUSD_BSC,
+  ],
 }
 
 // used to construct the list of all pairs we consider by default in the frontend

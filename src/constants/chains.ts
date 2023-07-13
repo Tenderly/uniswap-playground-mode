@@ -24,6 +24,19 @@ export enum SupportedChainId {
   CELO_ALFAJORES = 44787,
 
   BNB = 56,
+
+  T_MAINNET = 73403171,
+  T_GOERLI = 73403175,
+  T_SEPOLIA = 734031711155111,
+  T_ARBITRUM_ONE = 734031742161,
+  T_ARBITRUM_GOERLI = 7340317421613,
+  T_OPTIMISM = 734031710,
+  T_OPTIMISM_GOERLI = 7340317420,
+  T_POLYGON = 7340317137,
+  T_POLYGON_MUMBAI = 734031780001,
+  T_CELO = 734031742220,
+  T_CELO_ALFAJORES = 734031744787,
+  T_BNB = 734031756,
 }
 
 export const UniWalletSupportedChains = [
@@ -46,6 +59,18 @@ export const CHAIN_IDS_TO_NAMES = {
   [SupportedChainId.OPTIMISM]: 'optimism',
   [SupportedChainId.OPTIMISM_GOERLI]: 'optimism_goerli',
   [SupportedChainId.BNB]: 'bnb',
+  [SupportedChainId.T_MAINNET]: 'mainnet',
+  [SupportedChainId.T_GOERLI]: 'goerli',
+  [SupportedChainId.T_SEPOLIA]: 'sepolia',
+  [SupportedChainId.T_ARBITRUM_ONE]: 'polygon',
+  [SupportedChainId.T_ARBITRUM_GOERLI]: 'polygon_mumbai',
+  [SupportedChainId.T_OPTIMISM]: 'optimism',
+  [SupportedChainId.T_OPTIMISM_GOERLI]: 'celo_alfajores',
+  [SupportedChainId.T_POLYGON]: 'arbitrum',
+  [SupportedChainId.T_POLYGON_MUMBAI]: 'arbitrum_goerli',
+  [SupportedChainId.T_CELO]: 'optimism',
+  [SupportedChainId.T_CELO_ALFAJORES]: 'optimism_goerli',
+  [SupportedChainId.T_BNB]: 'bnb',
 }
 
 /**
@@ -120,4 +145,12 @@ export type SupportedL2ChainId = typeof L2_CHAIN_IDS[number]
 
 export function isPolygonChain(chainId: number): chainId is SupportedChainId.POLYGON | SupportedChainId.POLYGON_MUMBAI {
   return chainId === SupportedChainId.POLYGON || chainId === SupportedChainId.POLYGON_MUMBAI
+}
+
+export const TENDERLY_CHAIN_FORK_PREFIX = '7340317'
+
+export function removeTenderlyChainIdPrefix(chainId: string | SupportedChainId) {
+  return Number.parseInt(
+    (chainId + '').indexOf(TENDERLY_CHAIN_FORK_PREFIX) == 0 ? (chainId + '').substring(7) : '' + chainId
+  )
 }

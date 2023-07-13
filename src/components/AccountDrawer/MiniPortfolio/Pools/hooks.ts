@@ -26,7 +26,6 @@ function useContractMultichain<T extends BaseContract>(
   chainIds?: SupportedChainId[]
 ): ContractMap<T> {
   const { chainId: walletChainId, provider: walletProvider } = useWeb3React()
-
   return useMemo(() => {
     const relevantChains =
       chainIds ??
@@ -35,6 +34,7 @@ function useContractMultichain<T extends BaseContract>(
         .filter(isSupportedChain)
 
     return relevantChains.reduce((acc: ContractMap<T>, chainId) => {
+      // TODO: multichain & forks
       const provider = walletProvider && walletChainId === chainId ? walletProvider : RPC_PROVIDERS[chainId]
       acc[chainId] = getContract(addressMap[chainId], ABI, provider) as T
       return acc

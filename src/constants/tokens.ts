@@ -2,7 +2,7 @@ import { Currency, Ether, NativeCurrency, Token, WETH9 } from '@uniswap/sdk-core
 import invariant from 'tiny-invariant'
 
 import { UNI_ADDRESS } from './addresses'
-import { SupportedChainId } from './chains'
+import { SupportedChainId, TENDERLY_CHAIN_FORK_PREFIX } from './chains'
 
 export const NATIVE_CHAIN_ID = 'NATIVE'
 
@@ -400,8 +400,17 @@ export const ARB = new Token(
   'Arbitrum'
 )
 
+const T_WETH9 = Object.entries(WETH9).reduce((wrapped, current) => {
+  const networkId = `${TENDERLY_CHAIN_FORK_PREFIX}${current[0]}`
+  wrapped[networkId] = current[1]
+  // const x = wrapped[] // = current[1]
+  return wrapped
+}, {} as any)
+
 export const WRAPPED_NATIVE_CURRENCY: { [chainId: number]: Token | undefined } = {
   ...(WETH9 as Record<SupportedChainId, Token>),
+  ...(T_WETH9 as Record<SupportedChainId, Token>),
+
   [SupportedChainId.OPTIMISM]: new Token(
     SupportedChainId.OPTIMISM,
     '0x4200000000000000000000000000000000000006',
@@ -467,6 +476,78 @@ export const WRAPPED_NATIVE_CURRENCY: { [chainId: number]: Token | undefined } =
   ),
   [SupportedChainId.BNB]: new Token(
     SupportedChainId.BNB,
+    '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+    18,
+    'WBNB',
+    'Wrapped BNB'
+  ),
+
+  // T_WETH9,
+  [SupportedChainId.T_OPTIMISM]: new Token(
+    SupportedChainId.T_OPTIMISM,
+    '0x4200000000000000000000000000000000000006',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  ),
+  [SupportedChainId.T_OPTIMISM_GOERLI]: new Token(
+    SupportedChainId.T_OPTIMISM_GOERLI,
+    '0x4200000000000000000000000000000000000006',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  ),
+  [SupportedChainId.T_ARBITRUM_ONE]: new Token(
+    SupportedChainId.T_ARBITRUM_ONE,
+    '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  ),
+  [SupportedChainId.T_ARBITRUM_GOERLI]: new Token(
+    SupportedChainId.T_ARBITRUM_GOERLI,
+    '0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  ),
+  [SupportedChainId.T_SEPOLIA]: new Token(
+    SupportedChainId.T_SEPOLIA,
+    '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  ),
+  [SupportedChainId.T_POLYGON]: new Token(
+    SupportedChainId.T_POLYGON,
+    '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    18,
+    'WMATIC',
+    'Wrapped MATIC'
+  ),
+  [SupportedChainId.T_POLYGON_MUMBAI]: new Token(
+    SupportedChainId.T_POLYGON_MUMBAI,
+    '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+    18,
+    'WMATIC',
+    'Wrapped MATIC'
+  ),
+  [SupportedChainId.T_CELO]: new Token(
+    SupportedChainId.T_CELO,
+    '0x471ece3750da237f93b8e339c536989b8978a438',
+    18,
+    'CELO',
+    'Celo native asset'
+  ),
+  [SupportedChainId.T_CELO_ALFAJORES]: new Token(
+    SupportedChainId.T_CELO_ALFAJORES,
+    '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
+    18,
+    'CELO',
+    'Celo native asset'
+  ),
+  [SupportedChainId.T_BNB]: new Token(
+    SupportedChainId.T_BNB,
     '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     18,
     'WBNB',

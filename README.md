@@ -1,4 +1,25 @@
-# Uniswap Labs Interface
+# Uniswap Labs Interface with Playground mode by Tenderly
+
+This repository is demonstrating adding the Playground capability, using Tenderly Forks as the implementation. 
+
+⚠️ This Uniswap fork is for demonstrational purposes only! 
+The purpose of this Uniswap UI fork is to demonstrate the process of adding playground capabilities. As a proof of concept, it's not advised to use it in other purposes.
+
+Notes:
+
+- Adding the playground mode required connecting to a dynamically generated network (Tenderly fork), which has chainID different from the chainID of the original chain. This mostly includes extension of static mappings addresses of ERC-20 tokens and Uniswap contracts (such as UniversalRouter). The addresses of these resources on the fork chain are the same as addresses on the original chain. See [Addresses mapping](src/constants/addresses.ts) and [Tokens mapping](src/constants/tokens.ts).
+- Complete playground would involve putting Uniswap backend in the sandbox mode, which is out of scope.
+- The graphql schema and supported chains are hard-coded. This repository will remain out of sync compared to latest.
+
+## Running the app
+
+To run the dapp, you'll need to edit the `.env` file and [update your username, project slug, and the access key](https://docs.tenderly.co/other/platform-access), and then
+
+```
+yarn start
+```
+
+## From the official repository docs
 
 [![codecov](https://codecov.io/gh/Uniswap/interface/branch/main/graph/badge.svg?token=YVT2Y86O82)](https://codecov.io/gh/Uniswap/interface)
 

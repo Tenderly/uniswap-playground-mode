@@ -2,6 +2,7 @@ import { getDeviceId, sendAnalyticsEvent, Trace, user } from '@uniswap/analytics
 import { CustomUserProperties, getBrowser, SharedEventName } from '@uniswap/analytics-events'
 import { useWeb3React } from '@web3-react/core'
 import Loader from 'components/Icons/LoadingSpinner'
+import PlaygroundControls from 'components/Polling/PlaygroundControls'
 import TopLevelModals from 'components/TopLevelModals'
 import { useFeatureFlagsIsLoaded } from 'featureFlags'
 import { useAtom } from 'jotai'
@@ -12,6 +13,7 @@ import { shouldDisableNFTRoutesAtom } from 'state/application/atoms'
 import { StatsigProvider, StatsigUser } from 'statsig-react'
 import styled from 'styled-components/macro'
 import { SpinnerSVG } from 'theme/components'
+import EnvironmentIndicator from 'theme/components/EnvironmentIndicator'
 import { useIsDarkMode } from 'theme/components/ThemeToggle'
 import { flexRowNoWrap } from 'theme/styles'
 import { Z_INDEX } from 'theme/zIndex'
@@ -198,6 +200,8 @@ export default function App() {
             <NavBar blur={isHeaderTransparent} />
           </HeaderWrapper>
           <BodyWrapper>
+            <EnvironmentIndicator />
+            <PlaygroundControls />
             <Popups />
             <Polling />
             <TopLevelModals />

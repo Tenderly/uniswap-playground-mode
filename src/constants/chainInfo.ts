@@ -13,7 +13,7 @@ import polygonMaticLogo from 'assets/svg/polygon-matic-logo.svg'
 import ms from 'ms.macro'
 import { darkTheme } from 'theme/colors'
 
-import { SupportedChainId, SupportedL1ChainId, SupportedL2ChainId } from './chains'
+import { removeTenderlyChainIdPrefix, SupportedChainId, SupportedL1ChainId, SupportedL2ChainId } from './chains'
 import { ARBITRUM_LIST, CELO_LIST, OPTIMISM_LIST, PLASMA_BNB_LIST } from './lists'
 
 export const AVERAGE_L1_BLOCK_TIME = ms`12s`
@@ -240,8 +240,10 @@ export function getChainInfo(
  * SupportedL2ChainId -> returns L2ChainInfo
  */
 export function getChainInfo(chainId: any): any {
-  if (chainId) {
-    return CHAIN_INFO[chainId] ?? undefined
+  const actualChainId = !chainId ? undefined : removeTenderlyChainIdPrefix(chainId)
+
+  if (actualChainId) {
+    return CHAIN_INFO[actualChainId] ?? undefined
   }
   return undefined
 }

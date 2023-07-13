@@ -5,7 +5,7 @@ import { useWeb3React, Web3ReactHooks, Web3ReactProvider } from '@web3-react/cor
 import { Connector } from '@web3-react/types'
 import { getConnection } from 'connection'
 import { isSupportedChain } from 'constants/chains'
-import { RPC_PROVIDERS } from 'constants/providers'
+import { useJsonRpcProvider } from 'constants/providers'
 import { TraceJsonRpcVariant, useTraceJsonRpcFlag } from 'featureFlags/flags/traceJsonRpc'
 import useEagerlyConnect from 'hooks/useEagerlyConnect'
 import useOrderedConnections from 'hooks/useOrderedConnections'
@@ -35,9 +35,10 @@ function Updater() {
   const { account, chainId, connector, provider } = useWeb3React()
   const { pathname } = useLocation()
   const currentPage = getCurrentPageFromLocation(pathname)
+  const jsonRpcProvider = useJsonRpcProvider(chainId)
 
   // Trace RPC calls (for debugging).
-  const networkProvider = isSupportedChain(chainId) ? RPC_PROVIDERS[chainId] : undefined
+  const networkProvider = isSupportedChain(chainId) ? jsonRpcProvider : undefined
   const shouldTrace = useTraceJsonRpcFlag() === TraceJsonRpcVariant.Enabled
   useEffect(() => {
     if (shouldTrace) {

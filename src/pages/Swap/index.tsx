@@ -11,7 +11,6 @@ import {
   SwapEventName,
 } from '@uniswap/analytics-events'
 import { Currency, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
-import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
 import { useWeb3React } from '@web3-react/core'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import { sendEvent } from 'components/analytics'
@@ -36,6 +35,7 @@ import { useNavigate } from 'react-router-dom'
 import { Text } from 'rebass'
 import { InterfaceTrade, TradeState } from 'state/routing/types'
 import styled, { useTheme } from 'styled-components/macro'
+import { UNIVERSAL_ROUTER_ADDRESS } from 'universal-router-tenderly'
 import { currencyAmountToPreciseFloat, formatTransactionAmount } from 'utils/formatNumbers'
 import { didUserReject } from 'utils/swapErrorToUserReadableMessage'
 import { switchChain } from 'utils/switchChain'
@@ -445,6 +445,7 @@ export function Swap({
             Sentry.captureException(error)
           })
         }
+        console.error('Swap error', error)
         setSwapState((currentState) => ({
           ...currentState,
           swapError: error,

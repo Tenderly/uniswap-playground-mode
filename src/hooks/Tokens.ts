@@ -1,7 +1,7 @@
 import { Currency, Token } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { getChainInfo } from 'constants/chainInfo'
-import { SupportedChainId } from 'constants/chains'
+import { removeTenderlyChainIdPrefix, SupportedChainId } from 'constants/chains'
 import { DEFAULT_INACTIVE_LIST_URLS, DEFAULT_LIST_OF_LISTS } from 'constants/lists'
 import { useCurrencyFromMap, useTokenFromMapOrNetwork } from 'lib/hooks/useCurrency'
 import { getTokenFilter } from 'lib/hooks/useTokenList/filtering'
@@ -22,11 +22,17 @@ function useTokensFromMap(tokenMap: TokenAddressMap, chainId: Maybe<SupportedCha
   return useMemo(() => {
     if (!chainId) return {}
 
+    const actualChainId = removeTenderlyChainIdPrefix(chainId)
     // reduce to just tokens
-    return Object.keys(tokenMap[chainId] ?? {}).reduce<{ [address: string]: Token }>((newMap, address) => {
-      newMap[address] = tokenMap[chainId][address].token
-      return newMap
-    }, {})
+    const justTokens = Object.keys(tokenMap[actualChainId] ?? {}).reduce<{ [address: string]: Token }>(
+      (newMap, address) => {
+        newMap[address] = tokenMap[actualChainId][address].token
+        return newMap
+      },
+      {}
+    )
+
+    return justTokens
   }, [chainId, tokenMap])
 }
 
